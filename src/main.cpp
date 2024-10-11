@@ -90,7 +90,8 @@ int main()
     paddle2Position.x = SCREEN_WIDTH * 0.95f;
     paddle1Position.y = paddle2Position.y = CENTER.y;
 
-    int testScore = 0;
+    int Player1Score = 0;
+    int Player2Score = 0;
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Pong");
     SetTargetFPS(60);
@@ -100,14 +101,16 @@ int main()
         float ballDelta = BALL_SPEED * dt;
         float paddleDelta = PADDLE_SPEED * dt;
 
-        // Move paddle with key input
+        // Move player 1 paddle with key input
         if (IsKeyDown(KEY_W))
             paddle1Position.y -= paddleDelta;
         if (IsKeyDown(KEY_S))
             paddle1Position.y += paddleDelta;
-
-        // Mirror paddle 1 for now
-        paddle2Position.y = paddle1Position.y;
+        // Move player 2 paddle with key input
+        if (IsKeyDown(KEY_UP))
+            paddle2Position.y -= paddleDelta;
+        if (IsKeyDown(KEY_DOWN))
+            paddle2Position.y += paddleDelta;
 
         float phh = PADDLE_HEIGHT * 0.5f;
         paddle1Position.y = Clamp(paddle1Position.y, phh, SCREEN_HEIGHT - phh);
@@ -120,7 +123,9 @@ int main()
         Box paddle2Box = PaddleBox(paddle2Position);
 
         // TODO -- increment the scoring player's score after they've touched the ball and the ball goes too far right/left
-        testScore++;
+
+
+
         if (ballBox.xMin < 0.0f || ballBox.xMax > SCREEN_WIDTH)
         {
             ballDirection.x *= -1.0f;
@@ -133,6 +138,17 @@ int main()
         {
             ballDirection.x *= -1.0f;
         }
+        if (ballBox.xMin < 0.0f)
+        {
+            Player1Score++;
+            ResetBall(ballPosition, ballDirection);
+
+        }
+        if (ballBox.xMax > SCREEN_WIDTH)
+        {
+            Player2Score++;
+            ResetBall(ballPosition, ballDirection);
+        }
 
         // Update ball position after collision resolution, then render
         ballPosition = ballPosition + ballDirection * ballDelta;
@@ -144,10 +160,12 @@ int main()
         DrawPaddle(paddle2Position, WHITE);
 
         // Text format requires you to put a '%i' wherever you want an integer, then add said integer after the comma
-        const char* testScoreText = TextFormat("Test Score: %i ", testScore);
-        
+        const char* Player1ScoreText = TextFormat("Player 1 Score: %i ", Player1Score);
+        const char* Player2ScoreText = TextFormat("Player 2 Score: %i ", Player2Score);
+
         // We can measure our text for more exact positioning. This puts our score in the center of our screen!
-        DrawText(testScoreText, SCREEN_WIDTH * 0.5f - MeasureText(testScoreText, 20) * 0.5f, 50, 20, BLUE);
+        DrawText(Player1ScoreText, SCREEN_WIDTH * 0.5f - MeasureText(Player1ScoreText, 30) * 1.5f, 50, 30, BLUE);
+        DrawText(Player2ScoreText, SCREEN_WIDTH * 0.5f - MeasureText(Player2ScoreText, 30) * -0.5f, 50, 30, BLUE);
         EndDrawing();
     }
 
