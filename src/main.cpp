@@ -96,7 +96,14 @@
         bool gameOver = false;
 
         InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Pong");
+
+        InitAudioDevice();
+        
+        Sound  fx1 = LoadSound("resources/ping_pong_8bit_plop.wav");
+        Sound  fx2 = LoadSound("resources/ping_pong_8bit_beeep.wav");
+
         SetTargetFPS(60);
+
         while (!WindowShouldClose())
         {
             if (Player1Score >= 5)
@@ -136,26 +143,40 @@
             // TODO -- increment the scoring player's score after they've touched the ball and the ball goes too far right/left
             if (ballBox.xMin < 0.0f || ballBox.xMax > SCREEN_WIDTH)
             {
+                PlaySound(fx1);
                 ballDirection.x *= -1.0f;
             }
             if (ballBox.yMin < 0.0f || ballBox.yMax > SCREEN_HEIGHT)
             {
+                PlaySound(fx1);
                 ballDirection.y *= -1.0f;
             }
             if (BoxOverlap(ballBox, paddle1Box) || BoxOverlap(ballBox, paddle2Box))
             {
+                PlaySound(fx1);
                 ballDirection.x *= -1.0f;
             }
             if (ballBox.xMin < 0.0f)
             {
-                Player1Score++;
+                PlaySound(fx2);
+                Player2Score++;
                 ResetBall(ballPosition, ballDirection);
             }
             if (ballBox.xMax > SCREEN_WIDTH)
             {
-                Player2Score++;
+                PlaySound(fx2);
+                Player1Score++;
                 ResetBall(ballPosition, ballDirection);
             }
+            if (Player1Score >= 5)
+            {
+                ResetBall(ballPosition, ballDirection);
+            }
+            if (Player2Score >= 5)
+            {
+                ResetBall(ballPosition, ballDirection);
+            }
+
 
             // Update ball position after collision resolution, then render
             ballPosition = ballPosition + ballDirection * ballDelta;
@@ -163,21 +184,34 @@
             BeginDrawing();
             ClearBackground(BLACK);
 
-            if ((gameOver) && (Player1Score >= 5))
+            if ((gameOver = true) && (Player1Score >= 5))
             {
+                
                 ClearBackground(WHITE);
-                DrawText("Player 1 Wins!", 50, 50, 60, BLUE);
+                DrawText("Player 1 Wins!", 360, 360, 60, BLUE);
+                DrawText("Press 'R' to play again!", 320, 420, 50, BLACK);
+                
+                if (IsKeyPressed(KEY_R))
+                {
+                   
+                }
             }
-            else if ((gameOver) && (Player2Score >= 5))
+            else if ((gameOver = true) && (Player2Score >= 5))
             {
                 ClearBackground(WHITE);
-                DrawText("Player 2 Wins!", 50, 50, 60, RED);
+                DrawText("Player 2 Wins!", 360, 360, 60, RED);
+                DrawText("Press 'R' to play again!", 320, 420, 50, BLACK);
+
+                if (IsKeyPressed(KEY_R)) 
+                {
+                    
+                }
             }
             else 
             {
                 DrawBall(ballPosition, WHITE);
-                DrawPaddle(paddle1Position, WHITE);
-                DrawPaddle(paddle2Position, WHITE);
+                DrawPaddle(paddle1Position, BLUE);
+                DrawPaddle(paddle2Position, RED);
 
                 // Text format requires you to put a '%i' wherever you want an integer, then add said integer after the comma
                 const char* Player1ScoreText = TextFormat("Player 1 Score: %i ", Player1Score);
@@ -186,12 +220,17 @@
                 // We can measure our text for more exact positioning. This puts our score in the center of our screen!
                 DrawText(Player1ScoreText, SCREEN_WIDTH * 0.5f - MeasureText(Player1ScoreText, 30) * 1.5f, 50, 30, BLUE);
                 DrawText(Player2ScoreText, SCREEN_WIDTH * 0.5f - MeasureText(Player2ScoreText, 30) * -0.5f, 50, 30, RED);
-
             }
 
             EndDrawing();
         }
 
+        UnloadSound(fx1);
+        UnloadSound(fx2);
+
+        CloseAudioDevice();
+
         CloseWindow();
+
         return 0;
     }
