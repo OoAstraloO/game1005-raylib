@@ -124,6 +124,7 @@
                 paddle1Position.y -= paddleDelta;
             if (IsKeyDown(KEY_S))
                 paddle1Position.y += paddleDelta;
+            // 
             // Move player 2 paddle with key input
             if (IsKeyDown(KEY_UP))
                 paddle2Position.y -= paddleDelta;
@@ -184,6 +185,8 @@
             BeginDrawing();
             ClearBackground(BLACK);
 
+            // Special feature #2 I was trying to implement: When you press R after the game is over, the game restarts, this would allow players to keep playing.
+            // Special feature #2 I successfully implemented: When you press R, Pong stops working and VS gives you an error! 
             if ((gameOver = true) && (Player1Score >= 5))
             {
                 
@@ -193,7 +196,7 @@
                 
                 if (IsKeyPressed(KEY_R))
                 {
-                   
+                    main();
                 }
             }
             else if ((gameOver = true) && (Player2Score >= 5))
@@ -204,7 +207,7 @@
 
                 if (IsKeyPressed(KEY_R)) 
                 {
-                    
+                    main();
                 }
             }
             else 
