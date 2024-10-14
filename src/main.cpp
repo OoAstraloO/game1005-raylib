@@ -97,6 +97,7 @@
 
         InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Pong");
 
+        // Raylib audio set up
         InitAudioDevice();
         
         Sound  fx1 = LoadSound("resources/ping_pong_8bit_plop.wav");
@@ -106,6 +107,7 @@
 
         while (!WindowShouldClose())
         {
+            // When either player reaches 5 points, the game ends
             if (Player1Score >= 5)
             {
                 bool gameOver = true;
@@ -119,12 +121,14 @@
             float ballDelta = BALL_SPEED * dt;
             float paddleDelta = PADDLE_SPEED * dt;
 
+            // Special Feature #1: Two players are able to play simutaneously, allowing for maximum fun among a party of two playing the game
+
             // Move player 1 paddle with key input
             if (IsKeyDown(KEY_W))
                 paddle1Position.y -= paddleDelta;
             if (IsKeyDown(KEY_S))
                 paddle1Position.y += paddleDelta;
-            // 
+
             // Move player 2 paddle with key input
             if (IsKeyDown(KEY_UP))
                 paddle2Position.y -= paddleDelta;
@@ -157,22 +161,27 @@
                 PlaySound(fx1);
                 ballDirection.x *= -1.0f;
             }
+            // Player 2 score increments by one when they score on Player 1, ball gets reset and a sound is played
             if (ballBox.xMin < 0.0f)
             {
                 PlaySound(fx2);
                 Player2Score++;
                 ResetBall(ballPosition, ballDirection);
             }
+            // Player 1 score increments by one when they score on Player 2, ball gets reset and a sound is played
             if (ballBox.xMax > SCREEN_WIDTH)
             {
                 PlaySound(fx2);
                 Player1Score++;
                 ResetBall(ballPosition, ballDirection);
             }
+
+            // Sounds won't play once game is over (Only way I could figure out to make it work)
             if (Player1Score >= 5)
             {
                 ResetBall(ballPosition, ballDirection);
             }
+            // Sounds won't play once game is over (Only way I could figure out to make it work)
             if (Player2Score >= 5)
             {
                 ResetBall(ballPosition, ballDirection);
@@ -228,6 +237,7 @@
             EndDrawing();
         }
 
+        // Unloading Raylib Audio
         UnloadSound(fx1);
         UnloadSound(fx2);
 
