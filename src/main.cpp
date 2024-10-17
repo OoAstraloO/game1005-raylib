@@ -16,6 +16,7 @@ enum TileType : int
     GRASS,      // Marks unoccupied space, can be overwritten 
     DIRT,       // Marks the path, cannot be overwritten
     WAYPOINT,   // Marks where the path turns, cannot be overwritten
+    TURRET,     // 
     COUNT
 };
 
@@ -98,6 +99,16 @@ std::vector<Cell> FloodFill(Cell start, int tiles[TILE_COUNT][TILE_COUNT], TileT
     return result;
 }
 
+struct Enemy 
+{
+    
+};
+
+struct Turret
+{
+
+};
+
 struct Bullet
 {
     Vector2 position{};
@@ -155,6 +166,10 @@ int main()
     while (!WindowShouldClose())
     {
         float dt = GetFrameTime();
+        Vector2 mouse = GetMousePosition();
+        Cell mouseCell;
+        mouseCell.col = mouse.x / TILE_SIZE;
+        mouseCell.row = mouse.y / TILE_SIZE;
 
         // Path following
         if (!atEnd)
@@ -179,7 +194,7 @@ int main()
             shootCurrent = 0.0f;
 
             Bullet bullet;
-            bullet.position = GetMousePosition();
+            bullet.position = mouse;
             bullet.direction = Normalize(enemyPosition - bullet.position);
             bullets.push_back(bullet);
         }
@@ -194,7 +209,8 @@ int main()
             bool collision = CheckCollisionCircles(enemyPosition, enemyRadius, bullet.position, bulletRadius);
             bullet.enabled = !expired && !collision;
         }
-
+        //Enemy removal
+        
         // Bullet removal
         bullets.erase(std::remove_if(bullets.begin(), bullets.end(),
             [&bullets](Bullet bullet) {
@@ -216,6 +232,7 @@ int main()
         for (const Bullet& bullet : bullets)
             DrawCircleV(bullet.position, bulletRadius, BLUE);
         DrawText(TextFormat("Total bullets: %i", bullets.size()), 10, 10, 20, BLUE);
+        DrawTile(mouseCell.row, mouseCell.col, PURPLE);
 
         EndDrawing();
     }
