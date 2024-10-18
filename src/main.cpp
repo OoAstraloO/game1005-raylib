@@ -254,6 +254,7 @@ int main()
             bullet.time += dt;
 
             bool expired = bullet.time >= bulletTime;
+
             for (int i = 0; i < bullies.size();)
             {
                 Enemy& enemy = bullies[i]; // Referencing a specific enemy within enemies vector
